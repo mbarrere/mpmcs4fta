@@ -23,7 +23,7 @@ In addition, designers and operators normally focus on the first MCS and not all
 
 In that context, our approach directly focuses on the *MCS with maximum probability (MPMSC)*.
 We model the MPMCS problem as a Weighted Partial MaxSAT problem and solve it using a parallel SAT-solving architecture.
-MPMCS4FTA is a Java-based tool built on top of [LDA4CPS](https://github.com/mbarrere/lda4cps) and is able to efficiently to identify the MPMCS on *fault trees* enriched with *independent failure probabilities*.
+MPMCS4FTA is a Java-based tool, built on top of [LDA4CPS](https://github.com/mbarrere/lda4cps), and is able to efficiently identify the MPMCS on *fault trees* enriched with *independent failure probabilities*.
 
 
 ## Requirements
