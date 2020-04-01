@@ -1,0 +1,148 @@
+{
+    "graph": {
+
+        "source":"s",
+
+	"target":"t",
+
+        "nodes": [
+            {
+                "id": "t",
+                "type": "goal",
+                "label": "Tank rupture",
+                "value": "0", 
+		"icon": "fta/top.png"
+            },            
+	    {
+                "id": "or-a",
+                "type": "or",
+                "label": "OR",
+                "value": "none"
+            },
+	    {
+                "id": "n1",
+                "type": "failure",
+                "label": "Tank failure",
+                "value": "0.001", 
+		"icon": "fta/be.png"
+            },
+	    {
+                "id": "n2",
+                "type": "failure",
+                "label": "Contacts failure",
+                "value": "0.1", 
+		"icon": "fta/be.png"
+            },
+	    {
+                "id": "n3",
+                "type": "failure",
+                "label": "Timer failure",
+                "value": "0.2", 
+		"icon": "fta/be.png"
+            },
+            {
+                "id": "n4",
+                "type": "failure",
+                "label": "Switch failure",
+                "value": "0.1", 
+		"icon": "fta/be.png"
+            },
+	    {
+                "id": "n5",
+                "type": "failure",
+                "label": "Operator failure",
+                "value": "0.2", 
+		"icon": "fta/be.png"
+            },
+	    {
+                "id": "n6",
+                "type": "failure",
+                "label": "Alarm failure",
+                "value": "0.01", 
+		"icon": "fta/be.png"
+            },
+	    {
+                "id": "and-b",
+                "type": "and",
+                "label": "AND",
+                "value": "none"
+            },
+	    {
+                "id": "or-c",
+                "type": "or",
+                "label": "OR",
+                "value": "none"
+            },
+	    {
+                "id": "or-d",
+                "type": "or",
+                "label": "OR",
+                "value": "none"
+            }
+        ],
+
+        "edges": [
+	    {
+                "source": "or-a",
+                "target": "t",
+                "label": "or-top",
+		"value":"1"
+            },
+	    {
+                "source": "n1",
+                "target": "or-a",
+                "label": "failure-or",
+		"value":"1"
+            },
+	    {
+                "source": "and-b",
+                "target": "or-a",
+                "label": "and-or",
+		"value":"1"
+            },
+	    {
+                "source": "or-c",
+                "target": "and-b",
+                "label": "or-and",
+		"value":"1"
+            },
+	    {
+                "source": "n2",
+                "target": "or-c",
+                "label": "failure-or",
+		"value":"1"
+            },
+	    {
+                "source": "n3",
+                "target": "or-c",
+                "label": "failure-or",
+		"value":"1"
+            },
+	    {
+                "source": "or-d",
+                "target": "and-b",
+                "label": "or-and",
+		"value":"1"
+            },
+
+	    {
+                "source": "n4",
+                "target": "or-d",
+                "label": "failure-or",
+		"value":"1"
+            },
+	    {
+                "source": "n5",
+                "target": "or-d",
+                "label": "failure-or",
+		"value":"1"
+            },
+	    {
+                "source": "n6",
+                "target": "or-d",
+                "label": "failure-or",
+		"value":"1"
+            }
+        ]
+    }
+}

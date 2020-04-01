@@ -1,5 +1,7 @@
 _Store
 .DS_Store?
+**/.DS_Store
+.DS_Store
 .classpath
 .optim-input.tmp
 .project

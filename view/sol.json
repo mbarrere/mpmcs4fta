@@ -1,0 +1,192 @@
+{
+  "graph" : {
+    "source" : "_s_",
+    "target" : "t",
+    "nodes" : [ {
+      "id" : "t",
+      "type" : "goal",
+      "value" : "none",
+      "label" : "Tank rupture",
+      "measures" : null,
+      "icon" : "fta/top.png"
+    }, {
+      "id" : "or-a",
+      "type" : "or",
+      "value" : "none",
+      "label" : "OR",
+      "measures" : null,
+      "icon" : null
+    }, {
+      "id" : "n1",
+      "type" : "failure",
+      "value" : "0.001",
+      "label" : "Tank failure",
+      "measures" : null,
+      "icon" : "fta/be.png"
+    }, {
+      "id" : "n2",
+      "type" : "failure",
+      "value" : "0.1",
+      "label" : "Contacts failure",
+      "measures" : null,
+      "icon" : "fta/be.png"
+    }, {
+      "id" : "n3",
+      "type" : "failure",
+      "value" : "0.2",
+      "label" : "Timer failure",
+      "measures" : null,
+      "icon" : "fta/be.png"
+    }, {
+      "id" : "n4",
+      "type" : "failure",
+      "value" : "0.1",
+      "label" : "Switch failure",
+      "measures" : null,
+      "icon" : "fta/be.png"
+    }, {
+      "id" : "n5",
+      "type" : "failure",
+      "value" : "0.2",
+      "label" : "Operator failure",
+      "measures" : null,
+      "icon" : "fta/be.png"
+    }, {
+      "id" : "n6",
+      "type" : "failure",
+      "value" : "0.01",
+      "label" : "Alarm failure",
+      "measures" : null,
+      "icon" : "fta/be.png"
+    }, {
+      "id" : "and-b",
+      "type" : "and",
+      "value" : "none",
+      "label" : "AND",
+      "measures" : null,
+      "icon" : null
+    }, {
+      "id" : "or-c",
+      "type" : "or",
+      "value" : "none",
+      "label" : "OR",
+      "measures" : null,
+      "icon" : null
+    }, {
+      "id" : "or-d",
+      "type" : "or",
+      "value" : "none",
+      "label" : "OR",
+      "measures" : null,
+      "icon" : null
+    }, {
+      "id" : "_s_",
+      "type" : "init",
+      "value" : "none",
+      "label" : "init",
+      "measures" : null,
+      "icon" : null
+    } ],
+    "edges" : [ {
+      "source" : "or-a",
+      "target" : "t",
+      "value" : "1",
+      "label" : "or-top"
+    }, {
+      "source" : "n1",
+      "target" : "or-a",
+      "value" : "1",
+      "label" : "failure-or"
+    }, {
+      "source" : "and-b",
+      "target" : "or-a",
+      "value" : "1",
+      "label" : "and-or"
+    }, {
+      "source" : "or-c",
+      "target" : "and-b",
+      "value" : "1",
+      "label" : "or-and"
+    }, {
+      "source" : "n2",
+      "target" : "or-c",
+      "value" : "1",
+      "label" : "failure-or"
+    }, {
+      "source" : "n3",
+      "target" : "or-c",
+      "value" : "1",
+      "label" : "failure-or"
+    }, {
+      "source" : "or-d",
+      "target" : "and-b",
+      "value" : "1",
+      "label" : "or-and"
+    }, {
+      "source" : "n4",
+      "target" : "or-d",
+      "value" : "1",
+      "label" : "failure-or"
+    }, {
+      "source" : "n5",
+      "target" : "or-d",
+      "value" : "1",
+      "label" : "failure-or"
+    }, {
+      "source" : "n6",
+      "target" : "or-d",
+      "value" : "1",
+      "label" : "failure-or"
+    }, {
+      "source" : "_s_",
+      "target" : "n1",
+      "value" : "inf",
+      "label" : "init-failure"
+    }, {
+      "source" : "_s_",
+      "target" : "n2",
+      "value" : "inf",
+      "label" : "init-failure"
+    }, {
+      "source" : "_s_",
+      "target" : "n3",
+      "value" : "inf",
+      "label" : "init-failure"
+    }, {
+      "source" : "_s_",
+      "target" : "n4",
+      "value" : "inf",
+      "label" : "init-failure"
+    }, {
+      "source" : "_s_",
+      "target" : "n5",
+      "value" : "inf",
+      "label" : "init-failure"
+    }, {
+      "source" : "_s_",
+      "target" : "n6",
+      "value" : "inf",
+      "label" : "init-failure"
+    } ]
+  },
+  "cut" : {
+    "nodes" : [ {
+      "id" : "n3",
+      "type" : "failure",
+      "value" : "0.2",
+      "label" : "Timer failure",
+      "measures" : null,
+      "icon" : "fta/be.png"
+    }, {
+      "id" : "n5",
+      "type" : "failure",
+      "value" : "0.2",
+      "label" : "Operator failure",
+      "measures" : null,
+      "icon" : "fta/be.png"
+    } ],
+    "measureByInstanceIdMap" : { },
+    "cost" : 0.04,
+    "solverId" : "MAX-SAT-SOLVER"
+  }
+}

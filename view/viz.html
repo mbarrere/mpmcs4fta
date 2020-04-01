@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Martin Barrere">
+    <style type="text/css">
+        .node { fill: #333; }
+        .link { stroke: #999; stroke-opacity: .6; stroke-width: 1px; }
+    </style>
+    <style>
+		#drop_zone {
+		  //min-height: 40px;
+		  width: 100px;
+		  //width: 50%;
+		  border: 2px dashed lightgrey;
+		  margin: 10px;
+		  padding: 10px;
+		  text-align: center;
+		}
+		#wrap {
+		    background: #e7e7e7;
+		    display: flex;
+		    justify-content: left;
+		    //padding: 40px;
+		    //width: 600px;
+		}
+
+		#left {
+		    background: #ccc;
+		    padding: 5px;
+		    padding-right: 25px;
+		}
+
+		#right {
+			width: 100%;
+			border: 1px solid lightgrey;
+		    background: #ccc;
+		    padding: 5px;
+		    padding-right: 25px;
+		}
+
+
+		.hull {
+		  fill: steelblue;
+		  stroke: steelblue;
+		  stroke-width: 2px;
+		  stroke-linejoin: round;
+		}
+
+		path.hull {
+		  fill: lightsteelblue; /* LightSeaGreen; */
+		  fill-opacity: 0.2;
+		}
+	</style>
+
+</head>
+<body>
+
+
+<!--
+//ADD//
+<input type="file" id="files" name="files[]" />
+<output id="list"></output>
+
+<script>
+  function handleFileSelect(evt) {
+    var files = evt.target.files; // FileList object
+
+    // files is a FileList of File objects. List some properties.
+    var output = [];
+    for (var i = 0, f; f = files[i]; i++) {
+      output.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ',
+                  f.size, ' bytes, last modified: ',
+                  f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a',
+                  '</li>');
+    }
+    document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
+  }
+
+  document.getElementById('files').addEventListener('change', handleFileSelect, false);
+</script>
+ -->
+ <!--
+ <div id="drop_zone">Drop JSON</div>
+ <textarea id="result"></textarea>
+  -->
+
+<!--
+<div id="wrap">
+    <div id="drop_zone">
+    <input type="file" style="display: none" />
+    <button>Load JSON</button>
+
+    <script src="https://code.jquery.com/jquery-2.2.4.js"></script>
+    <script>
+      $("button").on("click", function() {
+        $("input").trigger("click");
+        $('input[type=file]').change(function (evt) {
+        	evt.stopPropagation();
+            evt.preventDefault();
+        	var files = evt.target.files; // FileList object
+            //console.log(files[0].name);
+            loadSelectedFile(files[0]);
+        });
+      });
+    </script>
+    </div>
+    <div id="right"><output id="list"></output></div>
+</div>
+
+<script>
+  function handleFileSelect(evt) {
+    evt.stopPropagation();
+    evt.preventDefault();
+
+    var files = evt.dataTransfer.files; // FileList object.
+
+    // files is a FileList of File objects. List some properties.
+
+
+   	if (files.length <= 0) {
+        return false;
+    }
+   	//for (var i = 0, f; f = files[i]; i++) {
+    var f = files[0];
+
+    loadSelectedFile(f);
+
+  }
+
+  function loadSelectedFile (f) {
+	  var output = [];
+      output.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ',
+                  f.size, ' bytes, last modified: ',
+                  f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a',
+                  '</li>');
+      //console.log(f)
+      jsonInput = f.name;
+      var fr = new FileReader();
+
+      fr.onload = function(e) {
+      //console.log(e);
+        var result = JSON.parse(e.target.result);
+        //var formatted = JSON.stringify(result, null, 2);
+        	//document.getElementById('result').value = formatted;
+
+        var jsonObj = JSON.parse(e.target.result);
+        	//redraw();
+        	//svg.selectAll(".node").remove();
+    		//svg.selectAll(".link").remove();
+    		svg.selectAll("*").remove();
+
+        	//d3.select("svg").remove();
+    		createChildren();
+    		//update(graphLinks, graphNodes);
+            loadJSONData(jsonObj);
+      }
+
+      fr.readAsText(f);
+
+    //}
+    document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
+  }
+
+  function handleDragOver(evt) {
+    evt.stopPropagation();
+    evt.preventDefault();
+    evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
+  }
+
+  // Setup the dnd listeners.
+  //var dropZone = document.getElementById('drop_zone');
+  var dropZone = document.getElementById('wrap');
+  dropZone.addEventListener('dragover', handleDragOver, false);
+  dropZone.addEventListener('drop', handleFileSelect, false);
+</script>
+-->
+
+
+
+<svg width="1600" height="900"></svg>
+
+<!--
+<svg width="1600" height="900"></svg>
+<script src="http://d3js.org/d3.v4.min.js" type="text/javascript"></script>
+<script src="http://d3js.org/d3-selection-multi.v1.js"></script>
+-->
+<script src="d3.v4.min.js"></script>
+<script src="d3-selection-multi.v1.js"></script>
+
+
+<script type="text/javascript">
+    var colors = d3.scaleOrdinal(d3.schemeCategory10);
+    //var fill = d3.scale.category20();
+    var fill = d3.scaleOrdinal(d3.schemeCategory20);
+    var backgroundColor = '#FFF';
+    var zoomEnabled = true,
+    	offset = 15, //convexHullOffset
+    	convexHullsByMeasure = true;
+
+    var svg = d3.select("svg"),
+    	width = +svg.attr("width"),
+        height = +svg.attr("height"),
+        node,
+        link,
+        measuresAvailable;
+        //hullg,
+
+
+
+    var hullSet = [];
+
+    //var hull = svg.append("path").attr("class", "hull");
+
+    var curve = d3.curveCardinalClosed.tension(0.85);
+
+    //hullg = svg.append("g");
+	//var hullg = svg.append("path")
+	//  .attr("class",'hull');
+
+	//var convexHullPath = svg.append('path')
+    //	.attr ('fill', '#aca')
+    //	.attr ('stroke', '#888')
+    //	.attr ('stroke-width', '6px');
+
+    createChildren();
+
+    function createChildren() {
+    	//svg = d3.select("svg");
+    	//width = +svg.attr("width");
+        //height = +svg.attr("height");
+
+    	if (zoomEnabled) {
+    	    svg = svg
+    		.append('svg:g')
+    			//.call(d3.behavior.zoom().on("zoom", redraw))
+    			.call(d3.zoom().on("zoom", function () {
+    		    	svg.attr("transform", d3.event.transform)
+    		 	}))
+    			.on("dblclick.zoom", null)
+    			.append('svg:g');
+    		// the following creates a rectangle to cover the whole area and respond to zoom actions
+    		svg.append('svg:rect')
+    		.attr('width', width)
+    		.attr('height', height)
+    		.attr('fill', backgroundColor)
+    		//.on("click", showScenarioInfo)
+    		;
+        }
+        /*
+        //TITLE
+        svg.append("text")
+                .attr("x", 10)
+                .attr("y", 10)
+                .attr("text-anchor", "middle")
+                .style("font-size", "16px")
+                .style("text-decoration", "underline")
+                .text("Value vs Date Graph");
+        */
+        //svg.append("text").text("HOLA");
+
+        svg.append('defs').append('marker')
+            .attrs({'id':'arrowhead',
+                'viewBox':'-0 -5 10 10',
+                //'refX':13,
+                //'refX':17,
+                // shift arrow
+                'refX':20,
+                'refY':0,
+                'orient':'auto',
+                'markerWidth':13,
+                'markerHeight':13,
+                'xoverflow':'visible'})
+            .append('svg:path')
+            .attr('d', 'M 0,-5 L 10 ,0 L 0,5')
+            //.attr('fill', '#999')
+            .attr('fill', '#555')
+            .style('stroke','none');
+
+        hullg = svg.append("g");
+    }
+
+    var simulation = d3.forceSimulation()
+        .force("link", d3.forceLink().id(function (d) {return d.id;}).distance(120).strength(0.5))
+        .force("charge", d3.forceManyBody())
+        //.force("charge", 500)
+        .force("center", d3.forceCenter(width / 2, height / 2));
+
+    //var force = d3.forceSimulation().force();
+
+    var graphNodes = {};
+    var graphLinks = {};
+    var cutCost = -1;
+    var cutNodes = [];
+    var problemSource = "";
+    var problemTarget = "";
+
+    var defaultJSONInput = "sol.json";
+    //var jsonInput = "sec-metric-out.json";//"net-and-or-case1.json"; //"example1.json"
+    var jsonInput = defaultJSONInput;//"net-and-or-case1.json"; //"example1.json"
+
+    var output = [];
+    output.push('<li><strong>', escape(defaultJSONInput), '</strong>',
+            //f.size, ' bytes, last modified: ',
+            //f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a',
+            '</li>');
+    //ADD//
+    //document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
+
+   	//d3.json("graph.json", function (error, data) {
+       d3.json(jsonInput, function (error, data) {
+           if (error) throw error;
+           loadJSONData(data);
+       })
+
+
+    function loadJSONData(data) {
+    	problemSource = data.graph.source;
+        problemTarget = data.graph.target;
+
+        graphNodes = data.graph.nodes;
+        graphLinks = data.graph.edges;
+
+        if (data.cut) {
+        	console.log("Cut is present");
+        	cutTotal = data.cut.cost;
+        	console.log("Cut total: " + cutTotal);
+
+        	var length = data.cut.nodes.length;
+        	console.log("Number of nodes in cut: " + length);
+        	for (var i = 0; i < length; i++) {
+        		var cNode = data.cut.nodes[i];
+        		//console.log("CNode: " + cNode);
+
+        		for (var j = 0; j < graphNodes.length; j++) {
+        			var gNode = graphNodes[j];
+
+        			if (gNode.id == cNode.id) {
+        				//console.log("Found GNode: " + gNode);
+        				cutNodes.push(gNode);
+        				break;
+        			}
+
+            	}
+        	}
+        	/*
+        	cutNodes = graphNodes.filter(
+				    function(n) {
+				    	var found = false;
+				    	//while (!found &&)
+
+				    	return data.graph.cut.nodes.forEach(function (c) {
+			    			 if (c.id == n.id) return true;
+			    		});
+				    });
+        	*/
+        	//cutNodes = data.graph.cut.nodes;
+
+        	cutNodes.forEach(function(d){ console.log(d)})
+        } else {
+        	console.log("Cut is not available");
+        }
+
+        if (data.cut && data.cut.measureByInstanceIdMap) {
+        	console.log("Measures are available");
+        	measuresAvailable = true;
+
+        	hullSet = getConvexHullsByMeasure(graphNodes);
+        } else {
+        	console.log("Measures not available");
+        	measuresAvailable = false;
+        }
+
+        //update(data.graph.edges, data.graph.nodes);
+        //redraw();
+        update(graphLinks, graphNodes);
+      	//redraw();
+        //svg.append("text").text("HOLA");
+        /*
+        svg.append("text")
+                .attr("x", (width / 2))
+                .attr("y", 200)
+                .attr("text-anchor", "middle")
+                .attr("font-size", 18)
+                .attr("font-family", "sans-serif")
+                .text("SMSC probability: " + cutTotal);
+                */
+    }
+
+	function getGraphNodeById(id, nodes) {
+   		for (var j = 0; j < nodes.length; j++) {
+   			var n = nodes[j];
+   			if (n.id == id) { return n; }
+       	}
+   	}
+
+   	function getHullSetPoints(hullSet) {
+   		var hullPointsSet = [];
+
+   		//for (groupId in hullSet) {
+   		for (var i=0; i<hullSet.length; i++) {
+
+   			var nodes = hullSet[i].nodes;
+   			//console.log('Nodes.length: ' + nodes.length);
+   			var points = [];
+   			for (var k=0; k<nodes.length; ++k) {
+   				var nodeId = nodes[k];
+   				var d = getGraphNodeById(nodeId, simulation.nodes());
+   				//console.log('GraphNode ' + d.id + ', x=' + d.x + ', y=' + d.y);
+   				if (d) {
+   					points.push([d.x,d.y,d.id]);
+   				}
+   			}
+   			hullPointsSet.push({group: hullSet[i].group, points:points}); //d3 v5
+   			//hullPointsSet[hullSet[i].group] = points; //d3 v5
+   		}
+
+   		return hullPointsSet;
+   	}
+
+   	function getConvexHullsByMeasure(nodes) {
+   		var hulls = {};
+
+   		for (var k=0; k<nodes.length; ++k) {
+   			var n = nodes[k];
+
+   			if (n.measures) {
+   				var measures = n.measures;
+   				for(var i=0; i < measures.length; i++) {
+   					var m = measures[i];
+   					//var i = getGroupId(n),
+   					var measureInstanceId = m.id,
+   			        l = hulls[measureInstanceId] || (hulls[measureInstanceId] = []);
+   					//console.log('Measure for Node ' + n.id + ': ' + measureInstanceId);
+   				    l.push(n.id);
+   				}
+   			}
+   		}
+
+   		var hullset = [];
+   		for (i in hulls) {
+   				hullset.push({group: i, nodes:hulls[i]}); //d3 v5
+   		}
+   		return hullset;
+   	}
+
+   	function getHulls () {
+   		var hullSetPoints = getHullSetPoints(hullSet);
+   	   	//console.log("RenderHulls");
+
+   	   	var hulls = [];
+   	   	for (var i=0; i<hullSetPoints.length; i++) {
+    		   //console.log("hullSetPoints[" + i + "]: " + hullSetPoints[i].points);
+    		   var points = hullSetPoints[i].points;
+    			var convexHull = (points.length < 3) ? points : d3.polygonHull(points);
+ 		    	//hulls.push(convexHull);
+    			hulls.push({hullId: hullSetPoints[i].group, hullPoints:convexHull});
+    	   }
+   	   	return hulls;
+   	}
+
+    function renderHulls() {
+
+        var hulls = getHulls();
+   	   	if (hulls && hulls.length > 0) {
+   	   //convexHullPath.attr ('d', smoothHull(convexHull));
+   	 		hullg.selectAll("path.hull").remove();
+   	 		//console.log("hulls1");
+   		  	hull = hullg.selectAll("path.hull")
+   		      .data(hulls) //.data(getConvexHulls(this.nodes, offset))
+   			    .enter().append("path")
+   			    	.attr("class", "hull")
+   			    	//.attr ('fill', '#F00')
+   			    	//.attr ('stroke-width', '16px')
+   			    	.attr("d", smoothHullX)
+   			      	//.style("fill", function(d) { return fill(d.hullId); })
+   			      	//.style("fill", function(d) { return fill(d3.randomUniform (0, 100)); })
+   			      	.style("fill", function (d, i) {
+   			      		//console.log("hId: " + d.hullId);
+   	            		return fill(d.hullId);
+   	            	}
+   	            	)
+   			      	//.style("fill", "#F00")
+   			      	//.style("fill", "none")
+   			      	.style({'stroke': function(d) { console.log("hId: " + d.hullId); return fill(d.hullId); },
+   			        	'stroke-opacity':0.1,
+   			      		'stroke-width': function(d) { return '28px';	}
+   			      		})
+   			      /*
+   			      .exit().append("text")
+   				    //.attr("dx", 10)
+   				     //.attr("dy", 10)
+   			            .attr("font-size", 100)
+   			            //.text(function (d) {return d.name+":"+d.label;});
+   			            .text(function (d) {
+   			            	var value = "";
+   			                if (d.hullId != "none") {
+   			                	value = "(" + d.hullId + ")";
+   			                }
+   			            	//return d.id + ":" + d.type + value;
+   			                return d.hullId + " " + value;
+   			            });
+   			      */
+
+   			     //hull.append("title")
+   	            //	.text(function (d) {return d.hullId + " (" + d.type + ")";});
+   			      	//.on("click", function(d) { console.log("hull click", d); })
+   			      ;
+
+   			      	/*
+   		      svg.selectAll("hull").remove();
+   		      hull = hullg.selectAll("hull")
+   		      .data(hulls) //.data(getConvexHulls(this.nodes, offset))
+   		  	  .enter().append("text")
+   			    .attr("dx", 10)
+   			     .attr("dy", 10)
+   		            .attr("font-size", 100)
+   		            //.text(function (d) {return d.name+":"+d.label;});
+   		            .text(function (d) {
+   		            	var value = "";
+   		                if (d.hullId != "none") {
+   		                	value = "(" + d.hullId + ")";
+   		                }
+   		            	//return d.id + ":" + d.type + value;
+   		                return d.hullId + " " + value;
+   		            });
+   		            */
+
+   			      	/*
+   			hullg.selectAll("text").remove();
+   	      hull = hullg.selectAll("hull")
+   	      .data(hulls) //.data(getConvexHulls(this.nodes, offset))
+   		    .enter().append("text")
+   		    //.attr("dx", 10)
+   		     //.attr("dy", 10)
+   	            .attr("font-size", 100)
+   	            //.text(function (d) {return d.name+":"+d.label;});
+   	            .text(function (d) {
+   	            	var value = "";
+   	                if (d.hullId != "none") {
+   	                	value = "(" + d.hullId + ")";
+   	                }
+   	            	//return d.id + ":" + d.type + value;
+   	                return d.hullId + " " + value;
+   	            });
+
+   	            hull.append("title")
+   	            .text(function (d) {return d.id + " (" + d.hullId + ")";});
+   			*/
+   		  	//.attr ('fill', '#aca')
+   		    //.attr ('stroke', '#888')
+   		    //.attr ('stroke-width', '6px');
+   		  	//console.log("hulls2");
+   	   	}
+
+   	}
+
+    var smoothHullX = function ({hullId, hullPoints}) {
+   		//console.log("hId: " + hullId);
+      	return smoothHull(hullPoints);
+    }
+
+    function redraw() {
+    	//PENDING
+    	//link.exit().remove();
+    	//node.exit().remove();
+
+    	svg.selectAll(".node").remove();
+    	svg.selectAll(".link").remove();
+
+	    update(graphLinks, graphNodes);
+
+	    //console.log('Convex hulls: ' + getConvexHulls(force.nodes(), offset)[0]);
+    	if (measuresAvailable) {
+    		renderHulls();
+    	}
+
+    }
+
+
+
+    function update(links, nodes) {
+    	//graphNodes = nodes;
+    	//graphLinks = links;
+
+        link = svg.selectAll(".link")
+            .data(links)
+            .enter()
+            .append("line")
+            .attr("class", "link")
+            .attr('marker-end','url(#arrowhead)')
+
+        link.append("title")
+            .text(function (d) {return d.type;});
+
+        edgepaths = svg.selectAll(".edgepath")
+            .data(links)
+            .enter()
+            .append('path')
+            .attrs({
+                'class': 'edgepath',
+                'fill-opacity': 0,
+                'stroke-opacity': 0,
+                'id': function (d, i) {return 'edgepath' + i}
+            })
+            .style("pointer-events", "none");
+
+        edgelabels = svg.selectAll(".edgelabel")
+            .data(links)
+            .enter()
+            .append('text')
+            .style("pointer-events", "none")
+            .attrs({
+                'class': 'edgelabel',
+                'id': function (d, i) {return 'edgelabel' + i},
+                'font-size': 20,
+                'fill': '#aaa'
+            });
+
+        edgelabels.append('textPath')
+            .attr('xlink:href', function (d, i) {return '#edgepath' + i})
+            .style("text-anchor", "middle")
+            .style("pointer-events", "none")
+            .attr("startOffset", "50%")
+            .text(function (d) {return d.type});
+
+        node = svg.selectAll(".node")
+            .data(nodes)
+            .enter()
+            .append("g")
+            .attr("class", "node")
+            .on("click", nodeClick)
+            .call(d3.drag()
+                    .on("start", dragstarted)
+                    .on("drag", dragged)
+                    //.on("end", dragended)
+            );
+
+        node.append("circle")
+            //.attr("r", 10)
+            //.attr("r", function(d) { if (d.type && (d.type=="and" || d.type=="or")) { return 10; } else { return 10; } })
+            //FTA
+            .attr("r", function(d) { if (d.type && (d.type=="and" || d.type=="or")) { return 10; } else { return 13; } })
+            .style("fill", function (d, i) {
+            		//return colors(i);
+            		if (d.icon) {
+                  		return "#FFFF";
+                	}
+            		if (d.type) {
+            			if (d.type=="and" || d.type=="or") {
+        					return "#EEE";
+        				}
+            			if (d.type=="agent") {
+      							return "#4286f4";
+      						}
+                  			if (d.type=="sensor") {
+      							return "#fff432";
+      						}
+      				        if (d.type=="actuator") {
+      							return "#ff7423";
+      						}
+      				        if (d.type=="init") {
+      							return "#41f44a";
+      						}
+            		}
+            		return colors(i);
+            	}
+            )
+
+        node.append("circle")
+            //.attr("r", 10)
+            .attr("r", function(d) {
+            	var index = cutNodes.indexOf(d);
+            	if (index != -1) {
+                //return 25;
+                // FIXME: this is only for the probabilistic approach (this case should be identified from the JSON input)
+                //if (d.value!="1.0") { return 20; } else { return 0; } // probability 1.0 is treated as failed node
+                //FTA
+                //if (d.value!="1.0") { return 25; } else { return 0; } // probability 1.0 is treated as failed node
+                if (d.value!=1.0) { return 20; } else { return 0; } // probability 1.0 is treated as failed node
+            	} else {
+            		return 0; }
+            	})
+
+            .style("stroke", "red")
+            .style("stroke-width", 3)
+            .style("stroke-dasharray", ("10,3"))
+            .style("opacity", .8)      // set the element opacity
+            //.style("fill", "red");   // set the fill colour
+            .style("fill", "none");   // set the fill colour
+
+        //failed nodes
+        node.append("rect") // failed nodes
+            .attr("x", function(d) { if (d.value==1.0) { return -20; } else { return 0; } })
+            .attr("y", function(d) { if (d.value==1.0) { return -20; } else { return 0; } })
+            .attr("width", function(d) { if (d.value==1.0) { return 40; } else { return 0; } })
+            .attr("height", function(d) { if (d.value==1.0) { return 40; } else { return 0; } })
+            .style("stroke", "red")
+            .style("stroke-width", 3)
+            .style("stroke-dasharray", ("10,3"))
+            .style("opacity", .8)      // set the element opacity
+            //.style("fill", "red");   // set the fill colour
+            .style("fill", "none");   // set the fill colour
+
+
+        node.append("title")
+            .text(function (d) {return d.id + " (" + d.type + ")";});
+
+
+        node.append("text")
+            .attr("dx", 8)
+            .attr("dy", -15)
+            .attr("font-size", 18)
+            .attr("font-family", "sans-serif")
+            //.text(function (d) {return d.name+":"+d.label;});
+            .text(function (d) {
+            	var value = "";
+                if (d.value != "none") {
+                	value = "(" + d.value + ")";
+                	//value = "(" + d.label + ")";
+                }
+            	//return d.id + ":" + d.type + value;
+                //return d.id + " " + value;
+                return d.label + " " + value;
+            });
+
+        node.append('svg:image')
+            .attr("class", "node")
+            .attr("xlink:href", function(d) {
+            	  if (d.icon) {
+                      //console.log("ICON: " + d.icon);
+                      return d.icon;
+                    }
+
+            	if (d.type) {
+          		  if (d.type=="and") {
+          			return "images/and.png";
+          			//return "images/ampersand2.png";
+          		  }
+          		if (d.type=="or") {
+          			return "images/or.png";
+          			//return "images/vertical-bar.png";
+          		  }
+          	  }
+        })
+			 //.attr("x", function(d) { if (d.type && (d.type=="and" || d.type=="or")) { return -25; } else { return 0; } })
+      //.attr("x", function(d) { if ((d.type && (d.type=="and" || d.type=="or")) || (d.icon)) { return -20; } else { return 0; } })
+      .attr("x", function(d) { if ((d.type && (d.type=="and" || d.type=="or")) || (d.icon)) { return -14; } else { return 0; } })
+		  //.attr("y", function(d) { if (d.type && (d.type=="and" || d.type=="or")) { return -25; } else { return 0; } })
+      //.attr("y", function(d) { if ((d.type && (d.type=="and" || d.type=="or")) || (d.icon)) { return -20; } else { return 0; } })
+      .attr("y", function(d) { if ((d.type && (d.type=="and" || d.type=="or")) || (d.icon)) { return -14; } else { return 0; } })
+		  //.attr("width", function(d) { if (d.type && (d.type=="and" || d.type=="or")) { return 50; } else { return 0; } })
+      //.attr("width", function(d) { if ((d.type && (d.type=="and" || d.type=="or")) || (d.icon)) { return 40; } else { return 0; } })
+      .attr("width", function(d) { if ((d.type && (d.type=="and" || d.type=="or")) || (d.icon)) { return 28; } else { return 0; } })
+		  //.attr("height", function(d) { if (d.type && (d.type=="and" || d.type=="or")) { return 50; } else { return 0; } })
+      //.attr("height", function(d) { if ((d.type && (d.type=="and" || d.type=="or")) || (d.icon)) { return 40; } else { return 0; } })
+      .attr("height", function(d) { if ((d.type && (d.type=="and" || d.type=="or")) || (d.icon)) { return 28; } else { return 0; } })
+		  ;
+
+
+        /*
+        myHulls = svg.selectAll("path.hull")
+        .data(getHulls())
+        .enter()
+        .append("g")
+        .attr("class", "hull")
+        .on("click", function (d) {console.log("Hull clicked")});
+        */
+
+        simulation
+    	.nodes(graphNodes)
+    	.on("tick", ticked);
+
+	    simulation.force("link")
+	        .links(graphLinks);
+
+    }
+
+    function ticked() {
+    	if (measuresAvailable) {
+    		renderHulls();
+    	}
+    	link
+            .attr("x1", function (d) {return d.source.x;})
+            .attr("y1", function (d) {return d.source.y;})
+            .attr("x2", function (d) {return d.target.x;})
+            .attr("y2", function (d) {return d.target.y;});
+
+        node
+            .attr("transform", function (d) {return "translate(" + d.x + ", " + d.y + ")";});
+
+        edgepaths.attr('d', function (d) {
+            return 'M ' + d.source.x + ' ' + d.source.y + ' L ' + d.target.x + ' ' + d.target.y;
+        });
+
+        edgelabels.attr('transform', function (d) {
+            if (d.target.x < d.source.x) {
+                var bbox = this.getBBox();
+
+                rx = bbox.x + bbox.width / 2;
+                ry = bbox.y + bbox.height / 2;
+                return 'rotate(180 ' + rx + ' ' + ry + ')';
+            }
+            else {
+                return 'rotate(0)';
+            }
+        });
+    }
+
+    function dragstarted(d) {
+        if (!d3.event.active) simulation.alphaTarget(0.3).restart()
+        d.fx = d.x;
+        d.fy = d.y;
+    }
+
+    function dragged(d) {
+        d.fx = d3.event.x;
+        d.fy = d3.event.y;
+    }
+
+//    function dragended(d) {
+//        if (!d3.event.active) simulation.alphaTarget(0);
+//        d.fx = undefined;
+//        d.fy = undefined;
+//    }
+
+
+	function inDegree(n) {
+		var incomingNodes = graphLinks.filter(
+			    function(l) {
+			      return (l.target === n);
+			    });
+
+		//console.log("InDegree(" + n.id + "): " + incomingNodes.length);
+		return incomingNodes.length;
+	}
+
+	function spliceLinksForNode(d) {
+		toSplice = graphLinks.filter(
+				    function(l) {
+				      return (l.source === d) || (l.target === d);
+				    });
+		toSplice.map( function(l) {
+				      graphLinks.splice(graphLinks.indexOf(l), 1);
+				     });
+
+		toSplice.forEach(function (l) {
+			if (l.source === d) {
+				if (l.target.type == "and") {
+					deleteNode(l.target);
+					//console.log("Must also delete: " + l.target.id);
+				} else {
+					if (inDegree(l.target) == 0) {
+						//console.log("Must also delete: " + l.target.id + " (type: " + d.type + ")");
+						if (problemTarget == l.target.id) {
+							//console.log("=> Leaving target of the problem " + problemTarget + " in the graph");
+						} else {
+							deleteNode(l.target);
+						}
+
+					}
+				}
+			}
+		});
+	}
+
+	function deleteNode(d) {
+
+		var index = graphNodes.indexOf(d);
+		console.log("Node to delete: " + d.id + ", index=" + index);
+
+		if (index == -1) {
+			return;
+		}
+		graphNodes.splice(index, 1);
+        spliceLinksForNode(d);
+        redraw();
+	}
+
+
+  function spliceLinksForNodeOnly(d) {
+		toSplice = graphLinks.filter(
+				    function(l) {
+				      return (l.source === d) || (l.target === d);
+				    });
+		toSplice.map( function(l) {
+				      graphLinks.splice(graphLinks.indexOf(l), 1);
+				     });
+	}
+
+  function deleteNodeOnly(d) {
+
+		var index = graphNodes.indexOf(d);
+		console.log("(Node to delete (only): " + d.id + ", index=" + index);
+
+		if (index == -1) {
+			return;
+		}
+		graphNodes.splice(index, 1);
+        spliceLinksForNodeOnly(d);
+        redraw();
+	}
+
+	function nodeClick(d) {
+		if (d3.event.defaultPrevented) return; //a drag operation was performed (not a real click)
+		//console.log('clicked');
+
+		//highlightMultipleNodesOnGraphById([d.id], _selectedNodeColor, 0.2, 0.4, null, true);
+		//if (d3.event.ctrlKey) { //not working very well (on Mac at least)
+		if (d3.event.altKey) {
+			   console.log('alt clicked - remove node ONLY');
+         deleteNodeOnly(d);
+	    } else {
+	    	var linkedNodesIds = [];
+	    	if (d3.event.shiftKey) {
+	    		//console.log('shift clicked');
+	    		deleteNode(d);
+	    	} else {
+	    		//console.log('other clicked');
+	    	}
+	    }
+	}
+
+
+
+
+
+
+
+	var pointRadius = 20;
+	var hullPadding = 30;
+
+
+	// Point/Vector Operations
+
+	var vecFrom = function (p0, p1) {               // Vector from p0 to p1
+	    return [ p1[0] - p0[0], p1[1] - p0[1] ];
+	}
+
+	var vecScale = function (v, scale) {            // Vector v scaled by 'scale'
+	    return [ scale * v[0], scale * v[1] ];
+	}
+
+	var vecSum = function (pv1, pv2) {              // The sum of two points/vectors
+	    return [ pv1[0] + pv2[0], pv1[1] + pv2[1] ];
+	}
+
+	var vecUnit = function (v) {                    // Vector with direction of v and length 1
+	    var norm = Math.sqrt (v[0]*v[0] + v[1]*v[1]);
+	    return vecScale (v, 1/norm);
+	}
+
+	var vecScaleTo = function (v, length) {         // Vector with direction of v with specified length
+	    return vecScale (vecUnit(v), length);
+	}
+
+	var unitNormal = function (pv0, p1) {           // Unit normal to vector pv0, or line segment from p0 to p1
+	    if (p1 != null) pv0 = vecFrom (pv0, p1);
+	    var normalVec = [ -pv0[1], pv0[0] ];
+	    return vecUnit (normalVec);
+	};
+
+
+	// Hull Generators
+
+	var lineFn = d3.line()
+	    .curve (d3.curveCatmullRomClosed)
+	    .x (function(d) { return d.p[0]; })
+	    .y (function(d) { return d.p[1]; });
+
+
+	var smoothHull = function (polyPoints) {
+	    // Returns the SVG path data string representing the polygon, expanded and smoothed.
+
+	    var pointCount = polyPoints.length;
+
+	    // Handle special cases
+	    if (!polyPoints || pointCount < 1) return "";
+	    if (pointCount === 1) return smoothHull1 (polyPoints);
+	    if (pointCount === 2) return smoothHull2 (polyPoints);
+
+	    var hullPoints = polyPoints.map (function (point, index) {
+	        var pNext = polyPoints [(index + 1) % pointCount];
+	        return {
+	            p: point,
+	            v: vecUnit (vecFrom (point, pNext))
+	        };
+	    });
+
+	    // Compute the expanded hull points, and the nearest prior control point for each.
+	    for (var i = 0;  i < hullPoints.length;  ++i) {
+	        var priorIndex = (i > 0) ? (i-1) : (pointCount - 1);
+	        var extensionVec = vecUnit (vecSum (hullPoints[priorIndex].v, vecScale (hullPoints[i].v, -1)));
+	        hullPoints[i].p = vecSum (hullPoints[i].p, vecScale (extensionVec, hullPadding));
+	    }
+
+	    return lineFn (hullPoints);
+	}
+
+
+	var smoothHull1 = function (polyPoints) {
+	    // Returns the path for a circular hull around a single point.
+
+	    var p1 = [polyPoints[0][0], polyPoints[0][1] - hullPadding];
+	    var p2 = [polyPoints[0][0], polyPoints[0][1] + hullPadding];
+
+	    return 'M ' + p1
+	        + ' A ' + [hullPadding, hullPadding, '0,0,0', p2].join(',')
+	        + ' A ' + [hullPadding, hullPadding, '0,0,0', p1].join(',');
+	};
+
+
+	var smoothHull2 = function (polyPoints) {
+	    // Returns the path for a rounded hull around two points.
+
+	    var v = vecFrom (polyPoints[0], polyPoints[1]);
+	    var extensionVec = vecScaleTo(v, hullPadding);
+
+	    var extension0 = vecSum (polyPoints[0], vecScale(extensionVec, -1));
+	    var extension1 = vecSum (polyPoints[1], extensionVec);
+
+	    var tangentHalfLength = 1.2 * hullPadding;
+	    var controlDelta    = vecScaleTo (unitNormal(v), tangentHalfLength);
+	    var invControlDelta = vecScale (controlDelta, -1);
+
+	    var control0 = vecSum (extension0, invControlDelta);
+	    var control1 = vecSum (extension1, invControlDelta);
+	    var control3 = vecSum (extension0, controlDelta);
+
+	    return 'M ' + extension0
+	        + ' C ' + [control0, control1, extension1].join(',')
+	        + ' S ' + [          control3, extension0].join(',')
+	        + ' Z';
+	};
+
+
+
+
+
+
+
+
+	// Convex HULLS //
+
+
+	//var line = d3.line().curve(d3.curveCardinal.tension(0.5));
+    //var curve = d3.line()
+    //.curve(d3.curveLinear) //D3 v4
+	//.interpolate("cardinal-closed") //D3 v3
+	//.tension(.85);
+
+    /*
+    var drawCluster = function(d) {
+    return "M" +
+      //d3.geom.hull(d.values.map(function(i) { return [i.x, i.y]; }))
+      d3.polygonHull(d.values.map(function(i) { return [i.x, i.y]; }))
+        .join("L")
+    + "Z";
+	};
+	*/
+	function drawCluster(d) {
+		//.attr("d", function(d) { return "M" + d.join("L") + "Z"; })
+		//return "M" + d.join("L") + "Z";
+	  return curve(d.path); // 0.8
+	}
+
+
+	function getGroupId(n) {
+		var naggenNode = getNaggenNode(n.id);
+		//console.log('Getting group for naggen node ' + naggenNode.id + ', group=' + naggenNode.attributes.group + ', level=' + naggenNode.attributes.level);
+		 if (naggenNode.attributes && naggenNode.attributes.group) {
+			 //console.log('naggenNode ' + n.id + ' at level ' + n.attributes.level);
+			 return n.attributes.group;
+			 //return n.id;
+		 } else {
+			 //console.log('naggenNode ' + n.id + ' with no level => returning 0');
+			 return 0;
+		 }
+	}
+
+
+
+
+
+	function getConvexHullsByGroup(nodes, offset) {
+	  var hulls = {};
+
+	  // create point sets
+	  for (var k=0; k<nodes.length; ++k) {
+	    var n = nodes[k];
+	    //if (n.size) continue;
+	    var i = getGroupId(n),
+	        l = hulls[i] || (hulls[i] = []);
+
+	    //console.log('Node ' + n.id + ', x=' + n.x + ', y=' + n.y);
+	    l.push([n.x-offset, n.y-offset]);
+	    l.push([n.x-offset, n.y+offset]);
+	    l.push([n.x+offset, n.y-offset]);
+	    l.push([n.x+offset, n.y+offset]);
+	  }
+
+	  // create convex hulls
+	  var hullset = [];
+	  for (i in hulls) {
+	    hullset.push({group: i, path: d3.geom.hull(hulls[i])});
+	    //console.log('hullset[' + i + '].path: ' + hullset[i].path);
+	  }
+
+
+	  return hullset;
+	}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,224 @@
+{
+    "graph": {
+
+	"target":"tle",
+
+        "nodes": [
+            {
+                "id": "tle",
+                "type": "goal",
+                "label": "FPS failure",
+                "value": "0", 
+		"icon": "fta/top.png"
+            },            
+	    {
+                "id": "g1",
+                "type": "or",
+                "label": "OR",
+                "value": "none"
+            },
+	    {
+                "id": "ie1",
+                "type": "goal",
+                "label": "Detection fails",
+                "value": "0", 
+		"icon": "fta/ie.png"
+            },
+	    {
+                "id": "ie2",
+                "type": "goal",
+                "label": "Suppression fails",
+                "value": "0", 
+		"icon": "fta/ie.png"
+            },
+	    {
+                "id": "g2",
+                "type": "and",
+                "label": "AND",
+                "value": "none"
+            },
+	    {
+                "id": "g3",
+                "type": "or",
+                "label": "OR",
+                "value": "none"
+            },
+	    {
+                "id": "n1",
+                "type": "failure",
+                "label": "Smoke sensor",
+                "value": "0.2", 
+		"icon": "fta/be.png"
+            },
+	    {
+                "id": "n2",
+                "type": "failure",
+                "label": "Heat sensor",
+                "value": "0.1", 
+		"icon": "fta/be.png"
+            },
+
+	    {
+                "id": "n3",
+                "type": "failure",
+                "label": "No water",
+                "value": "0.001", 
+		"icon": "fta/be.png"
+            },
+	    {
+                "id": "n4",
+                "type": "failure",
+                "label": "Nozzles blocked",
+                "value": "0.002", 
+		"icon": "fta/be.png"
+            }, 
+	    {
+                "id": "ie3",
+                "type": "goal",
+                "label": "Triggering fails",
+                "value": "0", 
+		"icon": "fta/ie.png"
+            },
+	    {
+                "id": "g4",
+                "type": "and",
+                "label": "AND",
+                "value": "none"
+            }, 
+	    {
+                "id": "n5",
+                "type": "failure",
+                "label": "Auto fails",
+                "value": "0.05", 
+		"icon": "fta/be.png"
+            },
+	    {
+                "id": "ie4",
+                "type": "goal",
+                "label": "Remote fails",
+                "value": "0", 
+		"icon": "fta/ie.png"
+            },
+	    {	
+                "id": "g5",
+                "type": "or",
+                "label": "OR",
+                "value": "none"
+            }, 
+	    {
+                "id": "n6",
+                "type": "failure",
+                "label": "Comms fail",
+                "value": "0.1", 
+		"icon": "fta/be.png"
+            },
+	    {
+                "id": "n7",
+                "type": "failure",
+                "label": "DDoS attack",
+                "value": "0.05", 
+		"icon": "fta/be.png"
+            }
+        ],
+
+        "edges": [
+	    {
+                "source": "g1",
+                "target": "tle",
+                "label": "or-tle",
+		"value":"1"
+            },
+	    {
+                "source": "ie1",
+                "target": "g1",
+                "label": "ie-or",
+		"value":"1"
+            },
+	    {
+                "source": "ie2",
+                "target": "g1",
+                "label": "ie-or",
+		"value":"1"
+            },
+	    {
+                "source": "g2",
+                "target": "ie1",
+                "label": "and-ie",
+		"value":"1"
+            },
+	    {
+                "source": "g3",
+                "target": "ie2",
+                "label": "or-ie",
+		"value":"1"
+            },
+	    {
+                "source": "n1",
+                "target": "g2",
+                "label": "event-and",
+		"value":"1"
+            },
+	    {
+                "source": "n2",
+                "target": "g2",
+                "label": "event-and",
+		"value":"1"
+            },
+	    {
+                "source": "n3",
+                "target": "g3",
+                "label": "event-or",
+		"value":"1"
+            },
+	   {
+                "source": "n4",
+                "target": "g3",
+                "label": "event-or",
+		"value":"1"
+            }, 
+	    {
+                "source": "ie3",
+                "target": "g3",
+                "label": "ie-or",
+		"value":"1"
+            },
+
+	    {
+                "source": "g4",
+                "target": "ie3",
+                "label": "and-ie",
+		"value":"1"
+            },
+	    {
+                "source": "n5",
+                "target": "g4",
+                "label": "event-and",
+		"value":"1"
+            }, 
+	    {
+                "source": "ie4",
+                "target": "g4",
+                "label": "ie-and",
+		"value":"1"
+            }, 
+	    {
+                "source": "g5",
+                "target": "ie4",
+                "label": "or-ie",
+		"value":"1"
+            },
+	    {
+                "source": "n6",
+                "target": "g5",
+                "label": "event-or",
+		"value":"1"
+            }, 
+	    {
+                "source": "n7",
+                "target": "g5",
+                "label": "event-or",
+		"value":"1"
+            }
+        ]
+    }
+}
