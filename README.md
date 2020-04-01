@@ -16,15 +16,12 @@ Basic events can be associated to hardware failures, human errors, and other cyb
 
 FTA comprises a broad family of methods and techniques used for qualitative and quantitative analysis, among them, *minimal cut sets (MCSs)*.
 MCSs are minimal combinations of events that together may lead to the failure of the top level event.
-Therefore, MCSs are extremely useful to understand how failures might contribute to the failure of the system.
-Typical algorithms normally compute all MCSs and then sort them by their joint probability of occurrence.
-However, this process is quite expensive.
-In addition, designers and operators normally focus on the first MCS and not all of them (because there might be thousands of them). 
+MCSs are extremely useful to understand how failures might contribute to the failure of the system.
+The problem, however, is that there might be hundreds of MCSs depending on the size and composition of the fault tree under analysis. 
 
-In that context, our approach directly focuses on the *MCS with maximum probability (MPMSC)*.
+Therefore, instead of computing and sorting all MCSs by their joint probability of occurrence, we focus directly on the *MCS with maximum probability (MPMSC)*.
 We model the MPMCS problem as a Weighted Partial MaxSAT problem and solve it using a parallel SAT-solving architecture.
 MPMCS4FTA is a Java-based tool, built on top of [LDA4CPS](https://github.com/mbarrere/lda4cps), that is able to efficiently identify the MPMCS on *fault trees* enriched with *independent failure probabilities*.
-
 
 ## Requirements
 * Java 8
