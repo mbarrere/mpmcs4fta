@@ -1,6 +1,7 @@
 package uk.ac.imperial.isst.metric.tests;
 
 import static org.junit.Assert.fail;
+import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 
@@ -62,15 +63,12 @@ public class SimpleExampleTest {
     	
 	@Test
 	public void testExample1() {
-		try {
-			//String filename = "examples/example1b.json";							
-			String filename = "examples/fps.json";
-			//String filename = "examples/example-tank.json";
-			//String filename = "examples/example-aircraft.json";
+		try {									
+			String filename = "examples/fps.json";			
 			ProblemSpecification problem = new JSONReader().loadProblemSpecification(filename);		
 			ProblemSolution sol = CpsMetricAnalyser.solveWithTseitinAndDisplaySolution(problem, config);
 			
-			//assertEquals(Double.valueOf(4.0), sol.getCut().getCost());
+			assertEquals(Double.valueOf(0.02), sol.getCut().getCost());
 			sol.getCut().display();
 		} catch (Exception e) {			
 			e.printStackTrace();

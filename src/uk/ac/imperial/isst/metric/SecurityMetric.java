@@ -138,7 +138,7 @@ public class SecurityMetric {
 			if (cost == 0.0) {
 				if (CpsMetricAnalyser.MSCS) {
 					System.out.println("Total critical nodes: 0");
-					System.out.println("[+] Minimal Stochastic Cut Set (MSCS): none");
+					System.out.println("[+] Maximum Probability Minimal Cut Set (MPMCS): none");
 				} else {
 					System.out.println("Total critical nodes: 0");
 					System.out.println("[+] Most likely critical set (MLCS): none");
@@ -156,7 +156,7 @@ public class SecurityMetric {
 		/* ** MAX_PROBS ** */
 		if (CpsMetricAnalyser.WEIGHTS_AS_PROBABILITIES) {
 			if (CpsMetricAnalyser.MSCS) {
-				System.out.print("[+] Minimal Stochastic Cut Set (MSCS): ");
+				System.out.print("[+] Maximum Probability Minimal Cut Set (MPMCS): ");
 			} else {
 				System.out.print("[+] Most likely critical set (MLCS): ");
 			}

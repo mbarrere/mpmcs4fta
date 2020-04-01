@@ -1,16 +1,44 @@
 {
   "graph" : {
     "source" : "_s_",
-    "target" : "t",
+    "target" : "tle",
     "nodes" : [ {
-      "id" : "t",
+      "id" : "tle",
       "type" : "goal",
       "value" : "none",
-      "label" : "Tank rupture",
+      "label" : "FPS failure",
       "measures" : null,
       "icon" : "fta/top.png"
     }, {
-      "id" : "or-a",
+      "id" : "g1",
+      "type" : "or",
+      "value" : "none",
+      "label" : "OR",
+      "measures" : null,
+      "icon" : null
+    }, {
+      "id" : "ie1",
+      "type" : "goal",
+      "value" : "none",
+      "label" : "Detection fails",
+      "measures" : null,
+      "icon" : "fta/ie.png"
+    }, {
+      "id" : "ie2",
+      "type" : "goal",
+      "value" : "none",
+      "label" : "Suppression fails",
+      "measures" : null,
+      "icon" : "fta/ie.png"
+    }, {
+      "id" : "g2",
+      "type" : "and",
+      "value" : "none",
+      "label" : "AND",
+      "measures" : null,
+      "icon" : null
+    }, {
+      "id" : "g3",
       "type" : "or",
       "value" : "none",
       "label" : "OR",
@@ -19,66 +47,80 @@
     }, {
       "id" : "n1",
       "type" : "failure",
-      "value" : "0.001",
-      "label" : "Tank failure",
+      "value" : "0.2",
+      "label" : "Smoke sensor",
       "measures" : null,
       "icon" : "fta/be.png"
     }, {
       "id" : "n2",
       "type" : "failure",
       "value" : "0.1",
-      "label" : "Contacts failure",
+      "label" : "Heat sensor",
       "measures" : null,
       "icon" : "fta/be.png"
     }, {
       "id" : "n3",
       "type" : "failure",
-      "value" : "0.2",
-      "label" : "Timer failure",
+      "value" : "0.001",
+      "label" : "No water",
       "measures" : null,
       "icon" : "fta/be.png"
     }, {
       "id" : "n4",
       "type" : "failure",
-      "value" : "0.1",
-      "label" : "Switch failure",
+      "value" : "0.002",
+      "label" : "Nozzles blocked",
       "measures" : null,
       "icon" : "fta/be.png"
     }, {
-      "id" : "n5",
-      "type" : "failure",
-      "value" : "0.2",
-      "label" : "Operator failure",
+      "id" : "ie3",
+      "type" : "goal",
+      "value" : "none",
+      "label" : "Triggering fails",
       "measures" : null,
-      "icon" : "fta/be.png"
+      "icon" : "fta/ie.png"
     }, {
-      "id" : "n6",
-      "type" : "failure",
-      "value" : "0.01",
-      "label" : "Alarm failure",
-      "measures" : null,
-      "icon" : "fta/be.png"
-    }, {
-      "id" : "and-b",
+      "id" : "g4",
       "type" : "and",
       "value" : "none",
       "label" : "AND",
       "measures" : null,
       "icon" : null
     }, {
-      "id" : "or-c",
+      "id" : "n5",
+      "type" : "failure",
+      "value" : "0.05",
+      "label" : "Auto fails",
+      "measures" : null,
+      "icon" : "fta/be.png"
+    }, {
+      "id" : "ie4",
+      "type" : "goal",
+      "value" : "none",
+      "label" : "Remote fails",
+      "measures" : null,
+      "icon" : "fta/ie.png"
+    }, {
+      "id" : "g5",
       "type" : "or",
       "value" : "none",
       "label" : "OR",
       "measures" : null,
       "icon" : null
     }, {
-      "id" : "or-d",
-      "type" : "or",
-      "value" : "none",
-      "label" : "OR",
+      "id" : "n6",
+      "type" : "failure",
+      "value" : "0.1",
+      "label" : "Comms fail",
       "measures" : null,
-      "icon" : null
+      "icon" : "fta/be.png"
+    }, {
+      "id" : "n7",
+      "type" : "failure",
+      "value" : "0.05",
+      "label" : "DDoS attack",
+      "measures" : null,
+      "icon" : "fta/be.png"
     }, {
       "id" : "_s_",
       "type" : "init",
@@ -88,55 +130,85 @@
       "icon" : null
     } ],
     "edges" : [ {
-      "source" : "or-a",
-      "target" : "t",
+      "source" : "g1",
+      "target" : "tle",
       "value" : "1",
-      "label" : "or-top"
+      "label" : "or-tle"
+    }, {
+      "source" : "ie1",
+      "target" : "g1",
+      "value" : "1",
+      "label" : "ie-or"
+    }, {
+      "source" : "ie2",
+      "target" : "g1",
+      "value" : "1",
+      "label" : "ie-or"
+    }, {
+      "source" : "g2",
+      "target" : "ie1",
+      "value" : "1",
+      "label" : "and-ie"
+    }, {
+      "source" : "g3",
+      "target" : "ie2",
+      "value" : "1",
+      "label" : "or-ie"
     }, {
       "source" : "n1",
-      "target" : "or-a",
+      "target" : "g2",
       "value" : "1",
-      "label" : "failure-or"
-    }, {
-      "source" : "and-b",
-      "target" : "or-a",
-      "value" : "1",
-      "label" : "and-or"
-    }, {
-      "source" : "or-c",
-      "target" : "and-b",
-      "value" : "1",
-      "label" : "or-and"
+      "label" : "event-and"
     }, {
       "source" : "n2",
-      "target" : "or-c",
+      "target" : "g2",
       "value" : "1",
-      "label" : "failure-or"
+      "label" : "event-and"
     }, {
       "source" : "n3",
-      "target" : "or-c",
+      "target" : "g3",
       "value" : "1",
-      "label" : "failure-or"
-    }, {
-      "source" : "or-d",
-      "target" : "and-b",
-      "value" : "1",
-      "label" : "or-and"
+      "label" : "event-or"
     }, {
       "source" : "n4",
-      "target" : "or-d",
+      "target" : "g3",
       "value" : "1",
-      "label" : "failure-or"
+      "label" : "event-or"
+    }, {
+      "source" : "ie3",
+      "target" : "g3",
+      "value" : "1",
+      "label" : "ie-or"
+    }, {
+      "source" : "g4",
+      "target" : "ie3",
+      "value" : "1",
+      "label" : "and-ie"
     }, {
       "source" : "n5",
-      "target" : "or-d",
+      "target" : "g4",
       "value" : "1",
-      "label" : "failure-or"
+      "label" : "event-and"
+    }, {
+      "source" : "ie4",
+      "target" : "g4",
+      "value" : "1",
+      "label" : "ie-and"
+    }, {
+      "source" : "g5",
+      "target" : "ie4",
+      "value" : "1",
+      "label" : "or-ie"
     }, {
       "source" : "n6",
-      "target" : "or-d",
+      "target" : "g5",
       "value" : "1",
-      "label" : "failure-or"
+      "label" : "event-or"
+    }, {
+      "source" : "n7",
+      "target" : "g5",
+      "value" : "1",
+      "label" : "event-or"
     }, {
       "source" : "_s_",
       "target" : "n1",
@@ -167,26 +239,31 @@
       "target" : "n6",
       "value" : "inf",
       "label" : "init-failure"
+    }, {
+      "source" : "_s_",
+      "target" : "n7",
+      "value" : "inf",
+      "label" : "init-failure"
     } ]
   },
   "cut" : {
     "nodes" : [ {
-      "id" : "n3",
+      "id" : "n1",
       "type" : "failure",
       "value" : "0.2",
-      "label" : "Timer failure",
+      "label" : "Smoke sensor",
       "measures" : null,
       "icon" : "fta/be.png"
     }, {
-      "id" : "n5",
+      "id" : "n2",
       "type" : "failure",
-      "value" : "0.2",
-      "label" : "Operator failure",
+      "value" : "0.1",
+      "label" : "Heat sensor",
       "measures" : null,
       "icon" : "fta/be.png"
     } ],
     "measureByInstanceIdMap" : { },
-    "cost" : 0.04,
+    "cost" : 0.02,
     "solverId" : "MAX-SAT-SOLVER"
   }
 }
