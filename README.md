@@ -12,17 +12,18 @@
 ## Summary
 Fault Tree Analysis (FTA) constitutes a fundamental analytical tool aimed at modelling and evaluating how complex systems may fail.
 Essentially, a fault tree (FT) involves a set of basic events that are combined using logic operators (e.g. AND and OR gates) in order to model how these events may lead to an undesired system state represented at the root of the tree (usually called the top event).
-Basic events can be associated to hardware failures, human errors, and other cyber conditions.
+Basic events can be associated to hardware failures, human errors, and other cyber-physical conditions.
 
 FTA comprises a broad family of methods and techniques used for qualitative and quantitative analysis, among them, Minimal Cut Sets (MCSs).
 MCSs are minimal combinations of events that together may lead to the failure of the top level event.
-Therefore, MCSs are extremely useful to understand how failures might contribute to the top event.
-The standard approach is to compute all MCSs and then sort them by their joint probability of occurrence.
-However, this process is extremely expensive.
+Therefore, MCSs are extremely useful to understand how failures might contribute to the failure of the system.
+Typical algorithms normally compute all MCSs and then sort them by their joint probability of occurrence.
+However, this process is quite expensive.
+In addition, designers and operators normally focus on the first MCS and not all of them.
 
-Our approach directly computes the MCS with maximum probability (MPMSC) in an efficient manner.
+In that context, our approach directly computes the *MCS with maximum probability (MPMSC)* in an efficient manner.
 In particular, we model the MPMCS problem as a Weighted Partial MaxSAT problem and solve it using a parallel SAT-solving architecture.
-MPMCS4FTA is a Java-based tool, built on top of [LDA4CPS](https://github.com/mbarrere/lda4cps), that has been designed to identify the *Maximum Probability Minimal Cut Sets (MPMCS)* over *fault trees* enriched with *independent failure probabilities*.
+MPMCS4FTA is a Java-based tool, built on top of [LDA4CPS](https://github.com/mbarrere/lda4cps), that has been designed to identify the MPMCS over *fault trees* enriched with *independent failure probabilities*.
 
 
 ## Requirements
