@@ -14,7 +14,7 @@ Fault Tree Analysis (FTA) constitutes a fundamental analytical tool aimed at mod
 Essentially, a fault tree (FT) involves a set of basic events that are combined using logic operators (e.g. AND and OR gates) in order to model how these events may lead to an undesired system state represented at the root of the tree (usually called the top event).
 Basic events can be associated to hardware failures, human errors, and other cyber-physical conditions.
 
-FTA comprises a broad family of methods and techniques used for qualitative and quantitative analysis, among them, Minimal Cut Sets (MCSs).
+FTA comprises a broad family of methods and techniques used for qualitative and quantitative analysis, among them, *minimal cut sets (MCSs)*.
 MCSs are minimal combinations of events that together may lead to the failure of the top level event.
 Therefore, MCSs are extremely useful to understand how failures might contribute to the failure of the system.
 Typical algorithms normally compute all MCSs and then sort them by their joint probability of occurrence.
