@@ -65,7 +65,7 @@ Running in Python 2...
 In the browser, go to [http://localhost:8000/viz.html](http://localhost:8000/viz.html)  
 You should see the following fault tree along with the MPMCS (*Smoke sensor*, *Heat sensor*):
 
-![Screenshot - simple example](https://github.com/mbarrere/lda4cps/blob/master/screenshots/fire-protection-system.png)
+![Screenshot - simple example](https://github.com/mbarrere/mpmcs4fta/blob/master/screenshots/fire-protection-system.png)
 
 ---
 
