@@ -19,7 +19,7 @@ MCSs are minimal combinations of events that together may lead to the failure of
 Therefore, MCSs are extremely useful to understand how failures might contribute to the failure of the system.
 Typical algorithms normally compute all MCSs and then sort them by their joint probability of occurrence.
 However, this process is quite expensive.
-In addition, designers and operators normally focus on the first MCS and not all of them (that there might be thousands of them). 
+In addition, designers and operators normally focus on the first MCS and not all of them (because there might be thousands of them). 
 
 In that context, our approach directly focuses on the *MCS with maximum probability (MPMSC)*.
 We model the MPMCS problem as a Weighted Partial MaxSAT problem and solve it using a parallel SAT-solving architecture.
